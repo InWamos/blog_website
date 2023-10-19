@@ -1,3 +1,10 @@
 blog_website/blog_website/db_config.py
 
 blog_website/*sqlite3
+
+blog_website/blog/*__pycache__
+blog_website/blog_website/*__pycache__
+
+blog_website/blog/migrations
+
+blog_website/.vscode
