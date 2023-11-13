@@ -5,11 +5,28 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 
+class PublishedManager(models.Manager):
+    """Manager for published posts
+
+    Args:
+        models (): mother class
+    """
+
+    def get_queryset(self):
+        """returns all published posts"""
+        return super().get_queryset().filter(status=Post.Status.PUBLISHED)
+
+
 class Post(models.Model):
     class Status(models.TextChoices):
         DRAFT = "DF", "Draft"
         PUBLISHED = "PD", "Published"
 
+    # creating managers' instances
+    objects = models.Manager()
+    published = PublishedManager()
+
+    # Database fields
     title = models.CharField(max_length=250)
     slug = models.SlugField(max_length=250)
     body = models.TextField()
