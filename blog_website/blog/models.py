@@ -42,6 +42,7 @@ class Post(models.Model):
         default=Status.DRAFT,
     )
 
+    # Metadata defines in which order will we get elements
     class Meta:
         ordering = ["-publish"]
         indexes = [
