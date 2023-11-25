@@ -29,7 +29,7 @@ class Post(models.Model):
 
     # Database fields
     title = models.CharField(max_length=250)
-    slug = models.SlugField(max_length=250)
+    slug = models.SlugField(max_length=250, unique_for_date="publish")
     body = models.TextField()
     author = models.ForeignKey(
         to=User, on_delete=models.CASCADE, related_name="blog_posts"
@@ -53,7 +53,7 @@ class Post(models.Model):
     def get_absolute_url(self) -> str:
         return reverse(
             "blog:post_detail",
-            args=[self.id], # type: ignore
+            args=[self.id],  # type: ignore
         )
 
     def __str__(self) -> str:
