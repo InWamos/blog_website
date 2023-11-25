@@ -8,7 +8,7 @@ from .models import Post
 def post_list(request: HttpRequest) -> HttpResponse:
     posts = Post.published.all()
     return render(
-        request=request, template_name="blog/post.list.html", context={"posts": posts}
+        request=request, template_name="blog/post/list.html", context={"posts": posts}
     )
 
 
