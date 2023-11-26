@@ -1,6 +1,6 @@
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage
 
 # Create your views here.
 from .models import Post
@@ -11,7 +11,11 @@ def post_list(request: HttpRequest) -> HttpResponse:
 
     paginator = Paginator(post_list, 5)
     page_number = request.GET.get("page", 1)
-    posts = paginator.page(page_number)
+
+    try:
+        posts = paginator.page(page_number)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
 
     return render(
         request=request, template_name="blog/post/list.html", context={"posts": posts}
