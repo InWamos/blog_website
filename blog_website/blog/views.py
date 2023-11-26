@@ -1,11 +1,18 @@
+from ast import List
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
-# Create your views here.
+from django.views.generic import ListView
 from .models import Post
 
 
+class postListView(ListView):
+    queryset = Post.published.all()
+    context_object_name = "posts"
+    paginate_by = 5
+    template_name = "blog/post/list.html"
+
+# Obsolete view
 def post_list(request: HttpRequest) -> HttpResponse:
     post_list = Post.published.all()
 
