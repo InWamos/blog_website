@@ -1,18 +1,37 @@
+import re
+from typing import Any
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.views.generic import ListView
+from django.views.generic import ListView, CreateView
 
 from .models import Post
-from .forms import EmailPostForm
+from .forms import EmailPostForm, CommentForm
 
 
-class postListView(ListView):
+class PostListView(ListView):
     queryset = Post.published.all()
     context_object_name = "posts"
     paginate_by = 5
     template_name = "blog/post/list.html"
 
+
+class PostCommentView(CreateView):
+    form_class = CommentForm
+    template_name = "blog/post/comment.html"
+
+    def post(self, request: HttpRequest, post_id: int):
+        
+        self.post_id = post_id
+        post = get_object_or_404(
+            Post, id=self.post_id, status=Post.Status.PUBLISHED
+        )
+        form = CommentForm(data=request.POST)
+        comment = form.save(commit=False)
+        comment.post = post
+        comment.save()
+
+        return redirect(post.get_absolute_url())
 
 def post_share(request, post_id):
     # Retrieve post by id
@@ -70,5 +89,7 @@ def post_detail(
     )
 
     return render(
-        request=request, template_name="blog/post/detail.html", context={"post": post}
+        request=request,
+        template_name="blog/post/detail.html",
+        context={"post": post, "form": CommentForm()},
     )
