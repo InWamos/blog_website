@@ -5,11 +5,12 @@ app_name = "blog"
 
 urlpatterns = [
     # post views
-    path(route="", view=views.postListView.as_view(), name="post_list"),
+    path(route="", view=views.PostListView.as_view(), name="post_list"),
     path(
         route="<int:year>/<int:month>/<int:day>/<slug:post_slug>",
         view=views.post_detail,
         name="post_detail",
     ),
     path(route="<int:post_id>/share/", view=views.post_share, name="post_share"),
+    path("<int:post_id>/comment/", views.PostCommentView.as_view(), name="post_comment"),
 ]
