@@ -7,8 +7,7 @@ from django.views.generic import ListView, CreateView
 
 from .models import Post
 from .forms import EmailPostForm, CommentForm
-
-
+ 
 class PostListView(ListView):
     queryset = Post.published.all()
     context_object_name = "posts"
@@ -87,9 +86,10 @@ def post_detail(
         publish__year=year,
         slug=post_slug,
     )
+    comments = post.comments.filter(active=True) # type: ignore
 
     return render(
         request=request,
         template_name="blog/post/detail.html",
-        context={"post": post, "form": CommentForm()},
+        context={"post": post, "form": CommentForm(), "comments": comments},
     )
