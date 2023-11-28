@@ -11,5 +11,10 @@
         Share this post
     </a>
 </p>
+{% with comments.count as total_comments %}
+    <h2>
+        {{ total_comments }} comment{{ total_comments|pluralize }}
+    </h2>
+{% endwith %}
 {% include "blog/post/comment.html" with form_obj=form %}
 {% endblock %}
