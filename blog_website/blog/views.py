@@ -15,6 +15,15 @@ class PostListView(ListView):
     template_name = "blog/post/list.html"
 
 
+class TagListView(ListView):
+    context_object_name = "posts"
+    paginate_by = 5
+    template_name = "blog/post/list.html"
+
+    def get_queryset(self):
+        tag_slug = self.kwargs.get("tag_slug")
+        return Post.published.filter(tags__slug__in=[tag_slug])
+    
 class PostCommentView(CreateView):
     form_class = CommentForm
     template_name = "blog/post/comment.html"
