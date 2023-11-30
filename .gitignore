@@ -8,3 +8,4 @@ blog_website/blog_website/*__pycache__
 blog_website/blog/migrations
 
 blog_website/.vscode
+blog_website/db.sqlite3.copy
