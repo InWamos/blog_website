@@ -59,7 +59,7 @@ def post_share(request, post_id):
     sent = False
     if request.method == "POST":
         # Form was submitted
-        form = EmailPostForm(request.POST)
+        form = EmailPostForm(request.POST) # type: ignore
         if form.is_valid():
             # Form fields passed validation
             cd = form.cleaned_data
