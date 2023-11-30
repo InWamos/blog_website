@@ -1,3 +1,4 @@
+from calendar import c
 import re
 from typing import Any
 from django.http import HttpRequest, HttpResponse
@@ -5,7 +6,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView, CreateView
 
-from .models import Post
+from .models import Post, PublishedManager
 from .forms import EmailPostForm, CommentForm
  
 class PostListView(ListView):
@@ -14,15 +15,26 @@ class PostListView(ListView):
     paginate_by = 5
     template_name = "blog/post/list.html"
 
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["view_type"] = "post_list"
+        return context
+
 
 class TagListView(ListView):
     context_object_name = "posts"
     paginate_by = 5
     template_name = "blog/post/list.html"
 
-    def get_queryset(self):
+    def get_queryset(self) -> PublishedManager:
         tag_slug = self.kwargs.get("tag_slug")
         return Post.published.filter(tags__slug__in=[tag_slug])
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["view_type"] = "tag_list"
+        context["tag_name"] = self.kwargs.get("tag_slug")
+        return context
     
 class PostCommentView(CreateView):
     form_class = CommentForm
