@@ -2,6 +2,7 @@ from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from taggit.managers import TaggableManager
 
 # Create your models here.
 
@@ -42,6 +43,7 @@ class Post(models.Model):
         choices=Status.choices,
         default=Status.DRAFT,
     )
+    tags = TaggableManager()
 
     # Metadata defines in which order will we get elements
     class Meta:
@@ -80,3 +82,5 @@ class Comment(models.Model):
 
     def __str__(self) -> str:
         return f'Comment by {self.name} on {self.post}'
+
+
