@@ -12,5 +12,6 @@ urlpatterns = [
         name="post_detail",
     ),
     path(route="<int:post_id>/share/", view=views.post_share, name="post_share"),
-    path("<int:post_id>/comment/", views.PostCommentView.as_view(), name="post_comment"),
+    path(route="<int:post_id>/comment/", view=views.PostCommentView.as_view(), name="post_comment"),
+    path(route="tag/<slug:tag_slug>/", view=views.TagListView.as_view(), name="post_list_by_tag"),
 ]
