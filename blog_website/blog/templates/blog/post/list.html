@@ -3,6 +3,12 @@
 
 {% block content %}
     <h1>My Blog</h1>
+        {% if view_type == "tag_list" %}
+            <h2>Posts tagged with "{{ tag_name }}"</h2>
+    
+        {% elif view_type == "post_list" %}
+            <h2>All posts</h2>
+        {% endif %}
     {% for post in posts %}
         <h2>
             <a href="{{ post.get_absolute_url }}">
