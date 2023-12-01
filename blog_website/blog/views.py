@@ -68,6 +68,8 @@ class PostDetailView(DetailView):
         )
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
+        # The posts recommended in the Similar posts section of the page appear in descending order based
+        # on the number of shared tags with the original post.
         post_all_tag_id = self.object.tags.values_list("id", flat=True)  # type: ignore
         similar_posts = Post.published.filter(tags__in=post_all_tag_id).exclude(id=self.object.id)  # type: ignore
         similar_posts_annotated = similar_posts.annotate(same_tags=Count("tags")).order_by("-same_tags", "-publish")[:4]  # type: ignore
