@@ -3,6 +3,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView, CreateView, DetailView
+from django.db.models import Count
 
 from .models import Post, PublishedManager
 from .forms import EmailPostForm, CommentForm
@@ -56,8 +57,7 @@ class PostDetailView(DetailView):
     template_name = "blog/post/detail.html"
     context_object_name = "post"
 
-    
-    def get_object(self, queryset=None):
+    def get_object(self, queryset=None) -> Post:
         return get_object_or_404(
             klass=Post,
             status=Post.Status.PUBLISHED,
@@ -67,11 +67,15 @@ class PostDetailView(DetailView):
             slug=self.kwargs["post_slug"],
         )
 
-    
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+        post_all_tag_id = self.object.tags.values_list("id", flat=True)  # type: ignore
+        similar_posts = Post.published.filter(tags__in=post_all_tag_id).exclude(id=self.object.id)  # type: ignore
+        similar_posts_annotated = similar_posts.annotate(same_tags=Count("tags")).order_by("-same_tags", "-publish")[:4]  # type: ignore
+
         context = super().get_context_data(**kwargs)
         context["form"] = CommentForm()
-        context["comments"] = self.object.comments.filter(active=True) # type: ignore
+        context["comments"] = self.object.comments.filter(active=True)  # type: ignore
+        context["similar_posts"] = similar_posts_annotated
         return context
 
 
@@ -116,6 +120,7 @@ def post_list(request: HttpRequest) -> HttpResponse:
     return render(
         request=request, template_name="blog/post/list.html", context={"posts": posts}
     )
+
 
 # Obsolete view
 def post_detail(
