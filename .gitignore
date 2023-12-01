@@ -1,3 +1,5 @@
+*__pycache__
+
 blog_website/blog_website/db_config.py
 
 blog_website/*sqlite3
