@@ -8,7 +8,7 @@ urlpatterns = [
     path(route="", view=views.PostListView.as_view(), name="post_list"),
     path(
         route="<int:year>/<int:month>/<int:day>/<slug:post_slug>",
-        view=views.post_detail,
+        view=views.PostDetailView.as_view(),
         name="post_detail",
     ),
     path(route="<int:post_id>/share/", view=views.post_share, name="post_share"),
