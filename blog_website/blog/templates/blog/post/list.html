@@ -26,7 +26,7 @@
         <p class="date">
             Published {{ post.publish|date:"G:i, F j Y" }} by {{ post.author }}
         </p>
-        {{ post.body|markdown|truncatewords_html:30 }}
+        {{ post.body|markdown_to_text|truncatewords:30 }}
     {% endfor %}
     {% include "blog/paginator.html" with page=page_obj %}
 {% endblock %}

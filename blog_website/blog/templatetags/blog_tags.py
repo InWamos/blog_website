@@ -3,6 +3,7 @@ from ..models import Post, PublishedManager
 from django.db.models import Count
 from django.utils.safestring import mark_safe
 import markdown
+from bs4 import BeautifulSoup
 
 register = template.Library()
 
@@ -22,9 +23,18 @@ def show_latest_posts(count: int = 5) -> dict:
 def get_most_commented_posts(count: int = 5) -> PublishedManager:
     return Post.published.annotate(total_comments=Count("comments")).order_by(
         "-total_comments"
-
     )[:count]
 
-@register.filter(name='markdown')
+
+@register.filter(name="markdown")
 def markdown_format(text):
     return mark_safe(markdown.markdown(text))
+
+
+@register.filter(name="markdown_to_text")
+def markdown_to_text(text):
+    return "".join(
+        BeautifulSoup(markdown.markdown(text), features="html.parser").findAll(
+            text=True
+        )
+    )
