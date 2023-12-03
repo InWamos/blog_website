@@ -17,9 +17,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic.base import RedirectView
+from django.contrib.sitemaps.views import sitemap
+from blog.sitemaps import PostSiteMap
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("blog/", include("blog.urls", namespace="blog")),
+    path(route="admin/", view=admin.site.urls),
     path(route="", view=RedirectView.as_view(url="blog/", permanent=False)),
+    path(route="blog/", view=include("blog.urls", namespace="blog")),
+    path(
+        route="sitemap.xml",
+        view=sitemap,
+        kwargs={"sitemaps": {"posts": PostSiteMap}},
+        name="django.contrib.sitemaps.views.sitemap",
+    ),
 ]
