@@ -1,5 +1,5 @@
 *__pycache__
-/venv
+venv/
 blog_website/blog_website/db_config.py
 
 
