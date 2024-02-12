@@ -1,12 +1,38 @@
 from typing import Any
+from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.views.generic import ListView, CreateView, DetailView
+from django.views.generic import ListView, CreateView, DetailView, FormView
+from django.contrib.postgres.search import SearchVector
 from django.db.models import Count
 
 from .models import Post, PublishedManager
-from .forms import EmailPostForm, CommentForm
+from .forms import EmailPostForm, CommentForm, SearchForm
+
+
+class PostSearchView(FormView):
+    template_name = "blog/post/search.html"
+    form_class = SearchForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        query = None
+        results = []
+
+        if "query" in self.request.GET:
+            form = SearchForm(self.request.GET)
+
+            if form.is_valid():
+                query = form.cleaned_data["query"]
+                results = Post.published.annotate(
+                    search=SearchVector("title", "body"),
+                ).filter(search=query)
+            
+        context["query"] = query
+        context["results"] = results
+
+        return context
 
 
 class PostListView(ListView):
@@ -66,7 +92,8 @@ class PostDetailView(DetailView):
             publish__year=self.kwargs["year"],
             slug=self.kwargs["post_slug"],
         )
-# PAGE :: 135
+
+    # PAGE :: 135
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         # The posts recommended in the Similar posts section of the page appear in descending order based
         # on the number of shared tags with the original post.

@@ -17,4 +17,5 @@ urlpatterns = [
     path(route="<int:post_id>/comment/", view=views.PostCommentView.as_view(), name="post_comment"),
     path(route="tag/<slug:tag_slug>/", view=views.TagListView.as_view(), name="post_list_by_tag"),
     path(route="feed/", view=LatestPostsFeed(), name="post_feed"),
+    path(route="search/", view=views.PostSearchView.as_view(), name="post_search")
 ]
