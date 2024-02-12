@@ -4,9 +4,6 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView, CreateView, DetailView, FormView
 from django.contrib.postgres.search import (
-    SearchVector,
-    SearchQuery,
-    SearchRank,
     TrigramSimilarity,
 )
 from django.db.models import Count
@@ -30,22 +27,12 @@ class PostSearchView(FormView):
             if form.is_valid():
                 query = form.cleaned_data["query"]
 
-                # query and vector both support removing the most used
-                # words in Russian language (config="russian")
-
-                # The default weights are D, C, B, and A, and they refer to the numbers 0.1, 0.2, 0.4, and 1.0,
-                # respectively.
-                search_vector = SearchVector("title", weight="A") + SearchVector(
-                    "body", weight="B"
-                )
-                search_query = SearchQuery(query)
-                search_rank = SearchRank(search_vector, search_query)
-
-                # We filter the results to display only the ones with a rank higher than 0.3.
                 results = (
-                    Post.published.annotate(search=search_vector, rank=search_rank)
-                    .filter(rank__gte=0.3)
-                    .order_by("-rank")
+                    Post.published.annotate(
+                        similarity=TrigramSimilarity("title", query),
+                    )
+                    .filter(similarity__gte=0.1)
+                    .order_by("-similarity")
                 )
 
         context["query"] = query
