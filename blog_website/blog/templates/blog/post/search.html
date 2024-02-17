@@ -17,7 +17,7 @@
             {{ post.title }}
         </a>
     </h4>
-{{ post.body|markdown|truncatewords_html:12 }}
+{{ post.body|markdown|striptags|truncatewords_html:12 }}
 {% empty %}
     <p>There are no results for your query.</p>
 {% endfor %}
