@@ -8,3 +8,4 @@ blog_website/blog/migrations
 blog_website/.vscode
 blog_website/db.sqlite3.copy
 blog_website/*sqlite3
+blog_website/static/posts_images/**
